@@ -48,7 +48,7 @@ object TreadleExecutive extends BackendExecutive {
     annotationSeq = (new ChiselStage).run(annotationSeq ++ Seq(RunFirrtlTransformAnnotation(new LowFirrtlEmitter)))
 
     // This generates a TreadleTesterAnnotation with a treadle tester instance
-    annotationSeq = (new TreadleTesterPhase).transform(annotationSeq)
+    annotationSeq = (TreadleTesterPhase).transform(annotationSeq)
 
     val treadleTester = annotationSeq.collectFirst { case TreadleTesterAnnotation(t) => t }.getOrElse(
       throw new Exception(
