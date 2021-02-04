@@ -93,3 +93,16 @@ case object TestCommandOverride extends HasShellOptions {
     )
   )
 }
+
+case class RuntimeCommandFlags(flags: String) extends VcsOption
+
+case object RuntimeCommandFlags extends HasShellOptions {
+  val options: Seq[ShellOption[_]] = Seq(
+    new ShellOption[String](
+      longOption = "t-runtime-flag",
+      toAnnotationSeq = (flags: String) => Seq(RuntimeCommandFlags(flags)),
+      helpText = "Flags that will be appended to the running command " +
+        "(./(simv) <YOUR FLAGS HERE>)"
+    )
+  )
+}
