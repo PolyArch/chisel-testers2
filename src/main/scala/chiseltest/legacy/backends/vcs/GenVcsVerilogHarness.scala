@@ -49,8 +49,8 @@ object GenVcsVerilogHarness {
     val (inputs, outputs) = fixNames(getPorts(dut, "_"))
 
     writer.write("module test;\n")
-    writer.write("  reg clock = 1;\n")
-    writer.write("  reg reset = 1;\n")
+    writer.write("//  reg clock = 1;\n")
+    writer.write("//  reg reset = 1;\n")
     val delay = if (isGateLevel) "#0.1" else ""
     inputs.foreach {
       case (node, name) =>
@@ -72,8 +72,8 @@ object GenVcsVerilogHarness {
 
     writer.write("\n  /*** DUT instantiation ***/\n")
     writer.write(s"  $dutName $dutName(\n")
-    writer.write("    .clock(clock),\n")
-    writer.write("    .reset(reset),\n")
+    writer.write("//    .clock(clock),\n")
+    writer.write("//    .reset(reset),\n")
     writer.write((inputs ++ outputs).map(_._2).map(name => s"    .$name(${name}_delay)").mkString(",\n"))
     writer.write("  );\n\n")
 
