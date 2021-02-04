@@ -23,7 +23,7 @@ object VerilogToVcs extends EditableBuildCSimulatorCommand {
       "-full64",
       "-quiet",
       "-timescale=1ns/1ps",
-      "-debug_acc+pp+dmptf -debug_region+cell+encrypt",
+      "-debug_acc+pp+dmptf -debug_region+cell+encrypt", // remove debug_pp based on warning of VCS 2020-12
       s"-Mdir=$topModule.csrc",
       "+v2k",
       "+vpi",
@@ -34,7 +34,7 @@ object VerilogToVcs extends EditableBuildCSimulatorCommand {
       "vpi.tab",
       "-cpp",
       "g++",
-      "-O2",
+      "-O3",
       "-LDFLAGS",
       "-lstdc++",
       "-CFLAGS",
