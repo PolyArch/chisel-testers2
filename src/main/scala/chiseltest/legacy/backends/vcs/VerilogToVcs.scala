@@ -23,7 +23,7 @@ object VerilogToVcs extends EditableBuildCSimulatorCommand {
       "-full64",
       "-quiet",
       "-timescale=1ns/1ps",
-      "-debug_pp",
+      "-debug_acc+pp+dmptf -debug_region+cell+encrypt",
       s"-Mdir=$topModule.csrc",
       "+v2k",
       "+vpi",

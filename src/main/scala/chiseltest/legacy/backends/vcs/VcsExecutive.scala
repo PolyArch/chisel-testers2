@@ -29,7 +29,7 @@ object VcsExecutive extends BackendExecutive {
     }
   }
 
-  def start[T <: MultiIOModule](
+  def start[T <: Module](
     dutGen:        () => T,
     annotationSeq: AnnotationSeq
   ): BackendInstance[T] = {
@@ -67,7 +67,7 @@ object VcsExecutive extends BackendExecutive {
     val vcsHarnessFileName = s"${circuit.name}-harness.v"
     val vcsHarnessFile = new File(targetDir, vcsHarnessFileName)
     val vpdFile = new File(targetDir, s"${circuit.name}.vpd")
-    CopyVpiFiles(targetDir.toString)
+    CopyVpiFiles(targetDir)
 
     GenVcsVerilogHarness(dut, new FileWriter(vcsHarnessFile), vpdFile.toString)
 
@@ -88,14 +88,14 @@ object VcsExecutive extends BackendExecutive {
       .getOrElse(Seq())
     val moreVcsCFlags = compiledAnnotations.collectFirst { case VcsCFlags(flagSeq) => flagSeq }
       .getOrElse(Seq())
-    val coverageFlags = (compiledAnnotations.collect {
+    val coverageFlags = compiledAnnotations.collect {
       case LineCoverageAnnotation        => List("line")
       case ToggleCoverageAnnotation      => List("tgl")
       case BranchCoverageAnnotation      => List("branch")
       case ConditionalCoverageAnnotation => List("cond")
       case UserCoverageAnnotation        => List("assert")
       case StructuralCoverageAnnotation  => List("line", "tgl", "branch", "cond")
-    }).flatten.distinct match {
+    }.flatten.distinct match {
       case Nil   => Seq()
       case flags => Seq("-cm " + flags.mkString("+"))
     }
@@ -127,6 +127,12 @@ object VcsExecutive extends BackendExecutive {
     val pathsAsData =
       combinationalPathsToData(dut, paths, portNames, componentToName)
 
-    new VcsBackend(dut, portNames, pathsAsData, command)
+    /* Appending Runtime flags to the end of `command` */
+    val runTimeflags : String = compiledAnnotations.collectFirst {
+      case RuntimeCommandFlags(flags) => flags
+    }.getOrElse("")
+    val runTimeComand : Seq[String] = command ++ Seq(runTimeflags)
+
+    new VcsBackend(dut, portNames, pathsAsData, runTimeComand)
   }
 }
